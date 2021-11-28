@@ -9,7 +9,6 @@ import datetime
 
 # Create your views here.
 def app(request):
-    #print(request.POST)
     return render(request, 'app/base.html')
 
 def generate_macm(request):
@@ -38,5 +37,3 @@ def generate_macm(request):
     response['Content-Type'] = 'text/plain'
     response['Content-Disposition'] = 'attachment; filename='+payload['application_name']+'_'+x+'.macm'
     return response
-
-    #return render(request, 'app/base.html')
