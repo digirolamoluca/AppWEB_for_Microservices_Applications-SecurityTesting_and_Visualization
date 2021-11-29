@@ -67,10 +67,36 @@
 
  <div class="container">
      <br> <br> <br>
-<h3>Personalizza type e dev_type dei corrispettivi container</h3>
+<h3>Personalizza type e dev_type dei corrispettivi container(pagina in costruzione)</h3>
 <br>
 
+     <form action="PageObjects" method="get">
+       <select name="type">
+        <option selected="selected" disabled>type:</option>
+        <option value="?">?</option>
+        <option value="Service.Web">Service.Web</option>
+        <option value="Service.DB">Service.DB</option>
+           <option value="Service.MQTTBroker">Service.MQTTBroker</option>
 
+       </select>
+       <input type="submit" value="Select">
+  </form>
+
+     <br>
+
+     <form action="PageObjects" method="get">
+       <select name="dev_type">
+        <option selected="selected" disabled>dev_type:</option>
+        <option value="?">?</option>
+        <option value="cots">cots</option>
+        <option value="custom">custom</option>
+       </select>
+       <input type="submit" value="Select">
+  </form>
+
+
+
+     <br><br>
 
     <a href="/app" type="button">Ritorna al download</a>
 
