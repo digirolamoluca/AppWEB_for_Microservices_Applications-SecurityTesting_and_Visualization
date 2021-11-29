@@ -42,10 +42,5 @@ def generate_macm(request):
 
 
 def customize(request):
-#    if request.method == 'GET':
-#        print('hello')
     return render(request, 'app/customize.html')
 
-#def viewmacm(request):
-#    content = open("./"+request.POST['application_name']+".macm").read()
-#    return HttpResponse(content, content_type='text/plain')
