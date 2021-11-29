@@ -7,5 +7,5 @@ Dockercompose_to_macm_DJANGO è un'applicazione web sviluppata con il supporto d
 3. L'applicazione web è ora disponibile tramite corrispettiva interfaccia
 
 ### Web Interface
-L'interfaccia web è disponibile presso localhost:8000/app
+L'interfaccia web è disponibile presso localhost:8000/app <br>
 ![webinterface](https://user-images.githubusercontent.com/90553744/143860073-097943bd-22af-403f-8979-5a92c0d501ad.png)
