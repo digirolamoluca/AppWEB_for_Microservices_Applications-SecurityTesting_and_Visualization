@@ -18,3 +18,4 @@ L'interfaccia web è raggiungibile presso localhost:8000/app <br>
 <br>
 Personalizzazione dei vari campi associati ai vari servizi
 <br>
+![Immagine](https://user-images.githubusercontent.com/90553744/146797139-a55d6870-2802-43b0-8b8a-5749f4424a94.png)
