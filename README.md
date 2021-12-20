@@ -3,8 +3,8 @@ Dockercompose_to_macm_DJANGO è un'applicazione web sviluppata con il supporto d
 Oltre alla creazione di un oggetto MACM è possibile anche caricare un MACM precedentemente creato e personalizzarne i corrispettivi attributi dei relativi servizi rappresentati dai vari nodi.
 Una volta ottenuto il MACM è possibile (oltre ad effettuare una successiva personalizzazione) effettuare: <br>
     -il download del MACM nel corrispettivo linguaggio Cypher come <b>application_name_timestamp.macm</b>. <br>
-    -una query cypher per inviare a neo4j ed ottenere un'effettiva visualizzazione del MACM in quanto grafo
-    -realizzazione delle corrispettive pipeline associate ai vari servizi (e invio a Jenkins tramite API WORK IN PROGRESS)
+    -una query cypher per inviare a neo4j ed ottenere un'effettiva visualizzazione del MACM in quanto grafo <br>
+    -realizzazione delle corrispettive pipeline associate ai vari servizi SaaS (e invio a Jenkins tramite API WORK IN PROGRESS)
 
 ### Start App
 1. Aprire il terminale in /path/to/dockercompose_to_macm
