@@ -22,7 +22,11 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('app/', include('app.urls')),
     path('upload_file/', views.generate_macm),
-
+    path('upload_file/customize', views.customize_macm),
+    path('upload_file/queryneo4j', views.macm_to_neo4j),
+    path('upload_file/download', views.download),
+    path('pipeline/', views.generate_pipeline),
+    path('pipeline_get/',views.pass_to_pipeline),
 ]
 
 

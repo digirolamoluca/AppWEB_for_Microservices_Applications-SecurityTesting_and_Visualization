@@ -55,6 +55,8 @@
     </style>
 </head>
 <body>
+
+
 <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
     <a class="navbar-brand" style="color: #0066FF">Generator Cypher</a>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault"
@@ -65,33 +67,160 @@
 </nav>
 
 
- <div class="container">
+
+
+ <div class="center" style="background-image: url('https://wallpaperaccess.com/full/3514961.png');"  >
+<div class="container">
      <br> <br> <br>
 <h3>Compila i campi necessari alla realizzazione del MACM</h3>
 <br>
 
+    {%if not nodes %}
 
 
 <form action="/upload_file/" method="post" enctype="multipart/form-data">{% csrf_token %}
-<label for="file">Docker Compose file:</label>
+
+
+<label for="file"><b> Docker Compose file: </b></label>
 <input type="file" name="file" id="file" />
 
 
-        <br><label> Application Name: </label>
-	<input type=”text” name="application_name" value="{{application_name}}" />
-         <br><label> App Id: </label>
-	<input type=”text” name="app_id" value="{{app_id}}" />
-<br>
-    <a href="/app/customize" type="button">Personalizza containers!</a>
-    <br>
-	<input type="submit" name="submit" value="Download"/>
+        <br><label><b> Application Name: </b></label>
+	<input name="application_name" value="{{application_name}}" />
 
+
+
+
+<p>
+<input type="submit" style="background-color:green; border-color:black; color:white"  name="yes_no" value="Crea" checked>
+</p>
+
+<input type="submit" style="background-color:red; border-color:black; color:white" name="yes_no" value="Carica">
+
+ <select  name="app_id">
+        <option selected="selected" disabled>app_id:</option>
+        {% for t_appid in total_appid %}
+        <option>{{ t_appid }}</option>
+                             {% endfor %}
+    </select>
+
+
+</form>
+     {%endif%}
+
+
+
+
+
+<form action="/upload_file/customize"  method="post" enctype="multipart/form-data">{% csrf_token %}
+
+    <input type="hidden" name="application" value="{{application}}">
+
+     {% if nodes %}
+    <input type="hidden" name="alert_overwrite" value="{{alert_overwrite}}">{{alert_overwrite}}
+    <input type="hidden" name="alert_backup" value="{{alert_backup}}">{{alert_backup}}
+    <input type="hidden" name="yes_no" value="{{yes_no}}">
+    <input type="hidden" name="appid" value="{{appid}}"> Personalizza l'applicazione con appid {{appid}}
+    <br>
+    <a>Selezionare custom_type solo se si sceglie dev_type pari a custom</a>
+    {% endif %}
+
+
+    <input type="hidden" name="outputfolder" value="{{outputfolder}}">
+    <input type="hidden" name="relativePath" value="{{relativePath}}">
+    <input type="hidden" name="total_appid" value="{{total_appid}}">
+    <input type="hidden" name="atype_backup" value="{{atype_backup}}">
+    <input type="hidden" name="components" value="{{components}}">
+    <input type="hidden" name="primaries" value="{{primaries}}">
+    <input type="hidden" name="secondaries" value="{{secondaries}}">
+
+<table class="table">
+        <tbody>
+            {% for item1,item2,item3,item4,item5,item6,item7 in lista %}
+                <tr>
+                    <td style="font-family: 'Times New Roman';font-size: medium">
+                    <b>Component</b> :
+                        {% if alert_backup %}
+                        {{ item5 }}
+                        {% else %}
+                        {{ item1.get_name }}
+                        {% endif %}
+                    <br>
+                    <b>Primary</b> :
+                        {% if alert_backup %}
+                        {{ item6 }}
+                        {% else %}
+                        {{ item1.get_primary }}
+                        {% endif %}
+                    <br>
+                    <b>Secondary</b> :
+                        {% if alert_backup %}
+                        {{ item7 }}
+                        {% else %}
+                        {{ item1.get_secondary }}
+                        {% endif %}
+                    <br>
+                    <b>Asset Type</b>
+                         <select  name="asset_type">
+        <option selected="selected" disabled>asset_type:</option>
+                             {% if alert_backup %}
+        <option selected>{{item2}}</option>
+                             {% else %}
+        <option selected>{{ item1.get_type }}</option>
+                             {% endif %}
+              {% for asset in asset_t %}
+        <option>{{ asset }}</option>
+                             {% endfor %}
+       </select>
+
+
+                     <br>
+                    <b>Dev Type</b>
+                        <select name="dev_type">
+        <option selected="selected" disabled>dev_type:</option>
+                 {% if alert_backup %}
+        <option selected>{{item3}}</option>
+                            {% else %}
+        <option selected>?</option>
+                            {% endif %}
+        <option>?</option>
+        <option>cots</option>
+        <option>custom</option>
+       </select>
+               <br>
+                        <b>Custom Type</b>
+                        <select name="custom_type">
+        <option selected="selected" disabled>custom_type:</option>
+                  {% if alert_backup %}
+        <option selected>{{item4}}</option>
+                            {% else %}
+        <option selected>?</option>
+                            {% endif %}
+        <option>?</option>
+        <option>JavaMaven</option>
+        <option>Nodejs</option>
+       </select>
+
+
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+    {% if nodes %}
+    <input type="submit" name="customize" value="Customize"/>
+
+    {% endif %}
+
+    <input type="hidden" name="error" value="{{error}}">{{error}}
+    <input type="hidden" name="error2" value="{{error2}}">{{error2}}
+    <input type="hidden" name="error3" value="{{error3}}">{{error3}}
 
 </form>
 
 
-
-
+</div>
     </div>
 
 
