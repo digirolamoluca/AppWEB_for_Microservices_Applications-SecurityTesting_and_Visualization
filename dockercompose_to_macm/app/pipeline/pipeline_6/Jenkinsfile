@@ -1,14 +1,22 @@
 pipeline {
 environment {
-registry = 'digirolamo//service-two-db'
+registry = 'digirolamo/test/web-application'
 registryCredential = 'dockerhub_credentials'
 dockerImage = ''
 DOCKER_TAG = getVersion().trim()
-IMAGE = ''
+IMAGE = 'test'
 }
 
 agent any
  stages { 
+
+ stage('SonarQube analysis'){
+  steps{
+   sh 'echo SonarQube analysis'
+ withSonarQubeEnv('Sonarqube') { 
+  sh "${tool('Sonarqube')}/bin/sonar-scanner"
+}}}
+
 
  stage('Building image') {
   steps{

@@ -1,10 +1,10 @@
 pipeline {
 environment {
-registry = 'digirolamo//consul3'
+registry = 'digirolamo/test/scope'
 registryCredential = 'dockerhub_credentials'
 dockerImage = ''
 DOCKER_TAG = getVersion().trim()
-IMAGE = ''
+IMAGE = 'test'
 }
 
 agent any

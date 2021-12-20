@@ -1,10 +1,10 @@
 pipeline {
 environment {
-registry = 'digirolamo//scope'
+registry = 'digirolamo/test/kibana'
 registryCredential = 'dockerhub_credentials'
 dockerImage = ''
 DOCKER_TAG = getVersion().trim()
-IMAGE = ''
+IMAGE = 'test'
 }
 
 agent any

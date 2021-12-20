@@ -42,17 +42,17 @@ def generate_macm(request):
         temp=total_appid_ordered[len(total_appid_ordered)-1]+1
     appid_choise=str(temp)
 
-    if yes_no=="Crea":
-        try:
-            global file
-            file=request.FILES['file']
-        except:
-            error="Upload 'Docker Compose file' non valido. Riprova"
-            return render(request, 'app/base.html',{
-                'error':error,
-                'total_appid':total_appid
-            })
 
+    try:
+        file=request.FILES['file']
+    except:
+        error="Upload 'Docker Compose file' non valido. IL DOCKER COMPOSE FILE VA CARICATO SEMPRE! Riprova"
+        return render(request, 'app/base.html',{
+            'error':error,
+            'total_appid':total_appid
+        })
+
+    if yes_no=="Crea":
         fs = FileSystemStorage(location="./docker_compose")
         #relativePath="./docker_compose/"+file.name
         relativePath="./docker_compose/"+str(appid_choise)+file.name
@@ -173,6 +173,7 @@ def generate_macm(request):
             'appid': appid,
             'application': application,
             'outputfolder': outputfolder,
+            'file':file,
             'yes_no':yes_no})
 
         #alist=[]
@@ -220,6 +221,8 @@ def customize_macm(request):
         #print(payload.appid)
         print("customizemacm")
         print(payload)
+        file=payload.getlist('file')
+        file=file[0]
         yes_no=payload.getlist('yes_no')
         yes_no=yes_no[0]
         relativePath=payload.getlist('relativePath')
@@ -234,7 +237,8 @@ def customize_macm(request):
         dtype=payload.getlist('dev_type')
         ctype=payload.getlist('custom_type')
 
-
+        print("file:")
+        print(file)
         #for i in range(0,len(atype),1):
             #if(atype[i]=="?"):
             #    error4="Tutti i campi sono obbligatori non è possibile lasciare valori incogniti '?'"
@@ -271,7 +275,7 @@ def customize_macm(request):
             primaries=primaries[0]
             secondaries=payload.getlist('secondaries')
             secondaries=secondaries[0]
-            dockercompose_to_macmFile.dockercompose_WriteTo_macmFile(outputfolder,"./docker_compose/"+appid+file.name,appid,application,atype,dtype)
+            dockercompose_to_macmFile.dockercompose_WriteTo_macmFile(outputfolder,"./docker_compose/"+appid+file,appid,application,atype,dtype)
 
 
         MACMobj_customize=MACM(appId=appid,application=application,components=components,primaries=primaries,secondaries=secondaries,asset_types=atype,dev_types=dtype,custom_types=ctype)
@@ -412,31 +416,33 @@ def generate_pipeline(request):
     #appid=appid[0]
     #print(payload)
 
-    print(payload)
 
-    a=payload['application']
+
     list=["\'","[","]","\'"]
+    a=payload['application']
     application="".join(i for i in a if i not in list)
     application=re.sub('["]','',application)
 
     #l'app id mi serve come chiave per ottenere valori dal DB
     b=payload['appid']
-    list=["\'","[","]","\'"]
     appid="".join(i for i in b if i not in list)
     appid=re.sub('["]','',appid)
 
-    print(appid)
+
     obj=MACM.objects.get(appId=appid)
     components=obj.components
     dev_type=obj.dev_types
+    secondaries=obj.secondaries
 
-    list=["'",",","[","]"]
-    components="".join(i for i in components if i not in list)
+    list2=["'",",","[","]"]
+    components="".join(i for i in components if i not in list2)
     components=components.split()
 
-    list=["'",",","[","]"]
-    dev_type="".join(i for i in dev_type if i not in list)
+    dev_type="".join(i for i in dev_type if i not in list2)
     dev_type=dev_type.split()
+
+    secondaries="".join(i for i in secondaries if i not in list2)
+    secondaries=secondaries.split()
 
     if request.method=='POST':
 
@@ -475,72 +481,74 @@ def generate_pipeline(request):
 
         shutil.rmtree("app/pipeline")
         ind=0
+        ind2=1
         for i in range(0,len(components),1):
-            path="app/pipeline/pipeline_"+str(ind)
-            os.makedirs(path)
-            file_pipeline=open("app/pipeline/pipeline_"+str(ind)+"/Jenkinsfile","w")
-            file_pipeline.write("pipeline {\nenvironment {\nregistry = '"+username+"/"+application+"/"+components[ind]+"'\n"
-                                "registryCredential = '"+docker_hub+"'\n"
-                                "dockerImage = ''\n"
-                                "DOCKER_TAG = getVersion().trim()\n"
-                                "IMAGE = '"+application+"'\n}"
-                                "\n\n"
+            if secondaries[ind]=="SaaS":
+                path="app/pipeline/pipeline_"+str(ind2)
+                os.makedirs(path)
+                file_pipeline=open("app/pipeline/pipeline_"+str(ind2)+"/Jenkinsfile","w")
+                file_pipeline.write("pipeline {\nenvironment {\nregistry = '"+username+"/"+application+"/"+components[ind]+"'\n"
+                                    "registryCredential = '"+docker_hub+"'\n"
+                                    "dockerImage = ''\n"
+                                    "DOCKER_TAG = getVersion().trim()\n"
+                                    "IMAGE = '"+application+"'\n}"
+                                    "\n\n"
             
-                                "agent any\n stages { \n\n")
-            if dev_type[ind]=="custom":
-                file_pipeline=open("app/pipeline/pipeline_"+str(ind)+"/Jenkinsfile","a")
+                                    "agent any\n stages { \n\n")
+                if dev_type[ind]=="custom":
+                    file_pipeline=open("app/pipeline/pipeline_"+str(ind2)+"/Jenkinsfile","a")
+                    file_pipeline.write(
+                                        " stage('SonarQube analysis'){\n"
+                                        "  steps{\n"
+                                        "   sh 'echo SonarQube analysis'\n"
+                                        " withSonarQubeEnv('Sonarqube') { \n"
+                                        "  sh " 
+                                        "\"${tool('Sonarqube')}/bin/sonar-scanner\""
+                                        "\n}}}\n"
+                                        "\n\n")
+
+                    file_sonarqube=open("app/pipeline/pipeline_"+str(ind2)+"/sonar-project.properties","a")
+                    file_sonarqube.write("sonar.projectKey="+application+"_application\n"
+                                        "sonar.exclusions=**/*.java\n"
+                                        "sonar.sources=./"+components[ind])
+
+                file_pipeline=open("app/pipeline/pipeline_"+str(ind2)+"/Jenkinsfile","a")
                 file_pipeline.write(
-                                    " stage('SonarQube analysis'){\n"
+                                    " stage('Building image') {\n"
                                     "  steps{\n"
-                                    "   sh 'echo SonarQube analysis'\n"
-                                    " withSonarQubeEnv('Sonarqube') { \n"
-                                    "  sh " 
-                                    "\"${tool('Sonarqube')}/bin/sonar-scanner\""
-                                    "\n}}}\n"
-                                    "\n\n")
-
-                file_sonarqube=open("app/pipeline/pipeline_"+str(ind)+"/sonar-project.properties","a")
-                file_sonarqube.write("sonar.projectKey="+application+"_application\n"
-                                     "sonar.exclusions=**/*.java\n"
-                                     "sonar.sources=./"+components[ind])
-
-            file_pipeline=open("app/pipeline/pipeline_"+str(ind)+"/Jenkinsfile","a")
-            file_pipeline.write(
-                                " stage('Building image') {\n"
-                                "  steps{\n"
-                                "   sh 'echo Building Image'\n"
-                                "   script {\n"
-                                "     dockerImage = docker.build('$registry:$DOCKER_TAG')\n}}}\n"
-                                "\n\n"
+                                    "   sh 'echo Building Image'\n"
+                                    "   script {\n"
+                                    "     dockerImage = docker.build('$registry:$DOCKER_TAG')\n}}}\n"
+                                    "\n\n"
                                                     
-                                " stage('Static Security Assesment'){\n"
-                                "  steps{\n"
-                                "   sh 'echo Static Security Assesment'\n"
-                                "   sh 'docker run --name ${IMAGE} -t -d $registry:${DOCKER_TAG}'\n"
-                                " withCredentials([usernamePassword(credentialsId: '"+inspec+"', passwordVariable: '"+password+"', usernameVariable: '"+inspec+"')]) {\n"
-                                " //inserire qui gli stig da definire in basde al tipo di sistema. Inseriamo 2 stig di esempio\n"
-                                " sh 'inspec exec https://github.com/dev-sec/linux-baseline -t docker://${IMAGE} --reporter html:Results/Linux_report.html --chef-license=accept || true'\n"
-                                " sh 'inspec exec https://github.com/dev-sec/apache-baseline -t docker://${IMAGE} --reporter html:Results/Apache_report.html --chef-license=accept || true'\n"
-                                " sh 'docker stop ${IMAGE}'\n"
-                                " sh 'docker container rm ${IMAGE}'\n}}}"
-                                "\n\n"
+                                    " stage('Static Security Assesment'){\n"
+                                    "  steps{\n"
+                                    "   sh 'echo Static Security Assesment'\n"
+                                    "   sh 'docker run --name ${IMAGE} -t -d $registry:${DOCKER_TAG}'\n"
+                                    " withCredentials([usernamePassword(credentialsId: '"+inspec+"', passwordVariable: '"+password+"', usernameVariable: '"+inspec+"')]) {\n"
+                                    " //inserire qui gli stig da definire in basde al tipo di sistema. Inseriamo 2 stig di esempio\n"
+                                    " sh 'inspec exec https://github.com/dev-sec/linux-baseline -t docker://${IMAGE} --reporter html:Results/Linux_report.html --chef-license=accept || true'\n"
+                                    " sh 'inspec exec https://github.com/dev-sec/apache-baseline -t docker://${IMAGE} --reporter html:Results/Apache_report.html --chef-license=accept || true'\n"
+                                    " sh 'docker stop ${IMAGE}'\n"
+                                    " sh 'docker container rm ${IMAGE}'\n}}}"
+                                    "\n\n"
                             
-                                " stage('Push Image') {\n"
-                                "  steps{\n"
-                                "   sh 'echo Push Image'\n"
-                                "   script {\n"
-                                "    docker.withRegistry( '', registryCredential ) {\n"
-                                "      dockerImage.push()\n }}}}}}\n"
+                                    " stage('Push Image') {\n"
+                                    "  steps{\n"
+                                    "   sh 'echo Push Image'\n"
+                                    "   script {\n"
+                                    "    docker.withRegistry( '', registryCredential ) {\n"
+                                    "      dockerImage.push()\n }}}}}}\n"
                             
-                                "def getVersion(){\n"
-                                " def commitHash = sh returnStdout: true, script: 'git rev-parse --short HEAD'\n"
-                                " return commitHash\n}"
-                                )
+                                    "def getVersion(){\n"
+                                    " def commitHash = sh returnStdout: true, script: 'git rev-parse --short HEAD'\n"
+                                    " return commitHash\n}"
+                                    )
 
-
+                ind2+=1
             ind+=1
 
-            file_pipeline.close()
+        file_pipeline.close()
 
 
     return render(request, 'app/pipeline.html',

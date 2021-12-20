@@ -1,10 +1,10 @@
 pipeline {
 environment {
-registry = 'digirolamo//elasticsearch'
+registry = 'digirolamo/test/logstash'
 registryCredential = 'dockerhub_credentials'
 dockerImage = ''
 DOCKER_TAG = getVersion().trim()
-IMAGE = ''
+IMAGE = 'test'
 }
 
 agent any
