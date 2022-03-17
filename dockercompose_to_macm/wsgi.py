@@ -11,6 +11,6 @@ import os
 
 from django.core.wsgi import get_wsgi_application
 
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'dockercompose_to_macm.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'AppWEB_for_Microservices_Applications-SecurityTesting_and_Visualization.settings')
 
 application = get_wsgi_application()
