@@ -15,6 +15,5 @@ Una volta ottenuto il MACM è possibile (oltre ad effettuare una successiva pers
 L'interfaccia web è raggiungibile presso localhost:8000/app <br>
 <br>
 ![Immagine](https://user-images.githubusercontent.com/90553744/146794715-06e04540-7193-476b-b976-f4a0f9de4629.png)
-<br>
 
 ### Workflow
