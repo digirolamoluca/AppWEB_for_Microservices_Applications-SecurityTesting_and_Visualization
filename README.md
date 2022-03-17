@@ -19,6 +19,4 @@ L'interfaccia web è raggiungibile presso localhost:8000/app <br>
 ### Workflow
 ![WORKFLOW - Copia](https://user-images.githubusercontent.com/90553744/158799827-16d63406-6211-4506-8d94-f55bd027432b.png)
 ### Flusso di esecuzione
-<br>
-
 https://user-images.githubusercontent.com/90553744/158803158-c77462bf-94a5-42c9-89a1-0580c08510e3.mp4
